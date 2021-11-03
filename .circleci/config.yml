@@ -193,7 +193,6 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            #printenv >> ./backend/.env
             cd backend
             npm install
             npm run build

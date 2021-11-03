@@ -192,7 +192,7 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            sudo pip install awscli
+            pip install awscli
             cd backend
             npm install
             npm audit fix --audit-level=critical

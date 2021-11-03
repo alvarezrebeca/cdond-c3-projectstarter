@@ -225,7 +225,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances--query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
@@ -249,11 +249,13 @@ jobs:
           fingerprints: ["08:a8:72:d2:d0:e5:84:2a:81:ee:9d:bf:a6:6e:df:32"]
       - attach_workspace:
           at: ~/
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
-            yum install -y tar gzip
-            npm install
+            apk add --update tar gzip nodejs npm ansible
+            pip install awscli 
       - run:
           name: Deploy backend
           command: |
@@ -267,7 +269,7 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment   
+      #- destroy-environment   
 
 workflows:
   default:
@@ -290,5 +292,5 @@ workflows:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
-      #- deploy-backend:
-      #    requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]

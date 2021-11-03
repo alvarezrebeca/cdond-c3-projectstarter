@@ -126,6 +126,7 @@ jobs:
     steps:
       - checkout
       - run: 
+          name: Install dependencies
           command: |
             yum install -y tar gzip
       - run:
@@ -156,6 +157,28 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment
+
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["08:a8:72:d2:d0:e5:84:2a:81:ee:9d:bf:a6:6e:df:32"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            yum install -y tar gzip
+            apk add --update ansible
+            pip install awscli
+      - run:
+          name: Configure server
+          command: |
+            cd ~/project/.circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment     
 
 workflows:
   default:

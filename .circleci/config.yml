@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  aws-cli: circleci/aws-cli@2.0.3
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.  
@@ -171,10 +174,11 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            pip install awscli
       - run:
           name: Configure server
           command: |
-            sudo cd .circleci/ansible
+            cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment     
 

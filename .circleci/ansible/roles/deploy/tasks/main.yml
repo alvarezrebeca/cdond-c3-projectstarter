@@ -23,4 +23,4 @@
   become: true
   command: pm2 start npm -- run start
   args:
-    chdir: /root/backend/dist
+    chdir: /backend/dist

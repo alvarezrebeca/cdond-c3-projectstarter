@@ -19,32 +19,26 @@
     production: yes
     state: present
 
-#- name: "copy backend file"
-#  become: true
-#  copy:
-#    src: artifact.tar
-#    dest: /home/ubuntu
-
 - name: Copy backend files
   become: true
   copy:
-      src: /backend/artifact.tar.gz
-      dest: /home/ubuntu/backend.tar.gz
+      src: /root/project/backend/artifact.tar.gz
+      dest: /home/ubuntu/
 
-#- name: "install npm packages"
-#  become: true
-#  command: npm install
-#  args:
- #   chdir: /root/backend/
+- name: "install npm packages"
+  become: true
+  command: npm install
+  args:
+    chdir: /home/ubuntu/backend
 
-#- name: "compile npm packages"
-#  become: true
-#  command: npm run build
-#  args:
-#    chdir: /root/backend/
+- name: "compile npm packages"
+  become: true
+  command: npm run build
+  args:
+      chdir: /home/ubuntu/backend
 
 - name: "start server"
   become: true
   command: pm2 start npm --name 'udapeople' --start
   args:
-    chdir: /home/ubuntu/backend/dist
+    chdir: /home/ubuntu/backend/

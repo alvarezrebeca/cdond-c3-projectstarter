@@ -22,5 +22,3 @@
 - name: "start server"
   become: true
   command: pm2 start npm -- run start
-  args:
-    chdir: /backend/dist

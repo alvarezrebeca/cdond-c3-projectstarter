@@ -13,6 +13,6 @@
 
 - name: "start server"
   become: true
-  command: pm2 start npm --name 'udapeople' --start
+  command: pm2 start npm -- run "start:dev"
   args:
     chdir: /home/ubuntu/backend/

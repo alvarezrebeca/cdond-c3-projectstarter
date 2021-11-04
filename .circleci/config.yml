@@ -12,12 +12,17 @@ commands:
           when: on_fail
           command: |
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} 
+       - run:
+          name: Destroy S3
+          when: on_fail
+          command: |
+            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
       - run:
           name: Destroy Frontend
           when: on_fail
           command: |
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-    
+
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow. 
     steps:
@@ -25,14 +30,13 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+            SUCCESS=$(curl -H "token: d9e23c3a-37a6-49d2-b58a-34344246a78e" --request GET https://api.memstash.io/values/migration_<< parameters.workflow_id >>)
             SUCCESS = 1
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+              cd ~/project/backend
+              npm install
+              npm run migration:revert
             fi
 
 jobs:
@@ -178,7 +182,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment
+      #- destroy-environment
 
   configure-infrastructure:
     docker:

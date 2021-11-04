@@ -22,24 +22,24 @@
 - name: "copy backend file"
   become: true
   copy:
-    src: /root/project/backend
-    dest: /root/
+    src: artifact.tar
+    dest: /home/ubuntu
     force: no
 
-- name: "install npm packages"
-  become: true
-  command: npm install
-  args:
-    chdir: /root/backend/
+#- name: "install npm packages"
+#  become: true
+#  command: npm install
+#  args:
+ #   chdir: /root/backend/
 
-- name: "compile npm packages"
-  become: true
-  command: npm run build
-  args:
-    chdir: /root/backend/
+#- name: "compile npm packages"
+#  become: true
+#  command: npm run build
+#  args:
+#    chdir: /root/backend/
 
 - name: "start server"
   become: true
-  command: pm2 start npm -- run start
+  command: pm2 start npm --name 'udapeople' --start
   args:
-    chdir: /root/backend/dist
+    chdir: /home/ubuntu/backend/dist

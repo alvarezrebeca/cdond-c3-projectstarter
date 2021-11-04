@@ -8,19 +8,11 @@ commands:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.  
     steps:
       - run:
-          name: Destroy Backend
+          name: Destroy environments
           when: on_fail
           command: |
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} 
-      - run:
-          name: Destroy S3
-          when: on_fail
-          command: |
             aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
-      - run:
-          name: Destroy Frontend
-          when: on_fail
-          command: |
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
@@ -80,16 +72,13 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-test]
+          keys: [frontend-build]
       - run:
           name: Run frontend test
           command: |
             cd frontend
             npm install
             npm run test
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-test
                 
   test-backend:
     docker:
@@ -97,16 +86,13 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-test]
+          keys: [backend-build]
       - run:
           name: Run backend test
           command: |
             cd backend
             npm install
             npm run test
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-test
 
   scan-frontend:
     docker:
@@ -114,17 +100,14 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-scan]
+          keys: [frontend-build]
       - run:
           name: Scan frontend dependencies
           command: |
             cd frontend
             npm install
-            npm audit fix --force
             npm audit --audit-level=critical
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-scan
+            npm audit fix --force
 
   scan-backend:
     docker:
@@ -132,19 +115,16 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-scan]
+          keys: [backend-build]
       - run:
           name: Scan backend dependencies
           command: |
             cd backend
             pip install awscli
             npm install
-            npm audit fix --force
             npm audit --audit-level=critical
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-scan
-
+            npm audit fix --force
+            
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -183,6 +163,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       #- destroy-environment
+      #- revert-migrations
 
   configure-infrastructure:
     docker:
@@ -206,21 +187,19 @@ jobs:
             cd .circleci/ansible
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i inventory.txt configure-server.yml
-      #- destroy-environment    
+      #- destroy-environment
+      #- revert-migrations    
 
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [backend-build]
       - run:
           name: Run migrations
           command: |
             cd backend
             npm install
-            npm run build
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:

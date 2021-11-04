@@ -198,6 +198,7 @@ jobs:
           command: |
             apk add --update ansible 
             apk add --no-cache rsync
+            apk add --no-cache openssh-client
             pip install awscli
       - run:
           name: Configure server

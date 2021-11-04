@@ -18,3 +18,9 @@
     global: yes
     production: yes
     state: present
+
+- name: "sync files from CircleCI to Server"
+  synchronize:
+    src: /root/project/backend
+    dest: /home/ubuntu
+

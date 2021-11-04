@@ -24,7 +24,6 @@
   copy:
     src: artifact.tar
     dest: /home/ubuntu
-    force: no
 
 #- name: "install npm packages"
 #  become: true

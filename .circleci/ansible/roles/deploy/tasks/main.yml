@@ -19,12 +19,18 @@
     production: yes
     state: present
 
-- name: "copy backend file"
+#- name: "copy backend file"
+#  become: true
+#  copy:
+#    src: artifact.tar
+#    dest: /home/ubuntu
+
+- name: Copy backend files
   become: true
   copy:
-    src: artifact.tar
-    dest: /home/ubuntu
-
+      src: /home/artifact.tar.gz
+      dest: /home/ubuntu/backend.tar.gz
+      
 #- name: "install npm packages"
 #  become: true
 #  command: npm install

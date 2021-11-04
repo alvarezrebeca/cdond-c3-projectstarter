@@ -206,7 +206,7 @@ jobs:
             cd backend
             npm install
             # clean up db
-            npm run migrations:revert
+            #npm run migrations:revert
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:

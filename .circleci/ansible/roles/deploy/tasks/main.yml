@@ -1,26 +1,25 @@
 ---
-- name: "upgrade packages."
-  become: true
-  apt:
-    upgrade: "yes"
+- name: Install Node modules
+  shell: |
+    cd /home/ubuntu/backend
+    ls -la
+    printenv
+    npm install
 
-- name: "install dependencies."
-  become: true
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
+- name: building node services
+  shell: |
+    cd /home/ubuntu/backend
+    npm run build
+    npm run prestart:prod
 
-- name: "install pm2"
-  become: yes
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
+- name: "run migrations again"
+  shell: |
+    cd /home/ubuntu/backend
+    npm run migrations
 
-- name: "start server"
+- name: Executing node
   become: true
-  command: pm2 start npm -- run "start:dev"
-  args:
-    chdir: /home/ubuntu/
+  shell: |
+    cd /home/ubuntu/backend 
+    pm2 start npm --name backend -- start
+    pm2 ls

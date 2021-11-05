@@ -6,6 +6,9 @@ orbs:
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.  
+    parameters:  
+      workflow_id:
+        type: string
     steps:
       - run:
           name: Destroy environments
@@ -106,8 +109,7 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm audit --audit-level=critical
-            npm audit fix --force
+            npm audit fix --audit-level=critical --force
 
   scan-backend:
     docker:
@@ -122,8 +124,7 @@ jobs:
             cd backend
             pip install awscli
             npm install
-            npm audit --audit-level=critical
-            npm audit fix --force
+            npm audit fix --audit-level=critical --force
             
   deploy-infrastructure:
     docker:
@@ -139,7 +140,7 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --tags project=udapeople \
+              --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --region eu-central-1 \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
@@ -148,7 +149,7 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project=udapeople \
+              --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --region eu-central-1 \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
@@ -161,6 +162,10 @@ jobs:
               --query "Reservations[*].Instances[*].PublicIpAddress" \
               --output text >> inventory.txt
             cat inventory.txt
+            
+            echo ${BACKEND_IP}
+            curl -H "Content-Type: text/plain" -H "token:${CIRCLE_WORKFLOW_ID:0:7}" \
+            --request PUT --data "${BACKEND_IP}" https://api.memstash.io/values/backend_ip
       - persist_to_workspace:
           root: ~/
           paths:
@@ -198,8 +203,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Run migrations
           command: |
@@ -221,13 +226,11 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: circleci/node:13.8.0
     steps:
       - checkout  
       - attach_workspace:
           at: ~/       
-      - restore_cache:
-          keys: [frontend-build]
       - run:
           name: Install dependencies
           command: |
@@ -264,12 +267,10 @@ jobs:
           fingerprints: ["08:a8:72:d2:d0:e5:84:2a:81:ee:9d:bf:a6:6e:df:32"]
       - attach_workspace:
           at: ~/
-      - restore_cache:
-          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip nodejs npm ansible
+            apk add --update tar gzip nodejs npm ansible 
             pip install awscli 
       - run:
           name: Deploy backend

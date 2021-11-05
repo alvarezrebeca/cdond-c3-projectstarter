@@ -5,9 +5,9 @@
     update_cache: yes
 
 - name: "upgrade packages."
-  become: true
+  become: yes
   apt:
-    upgrade: "yes"
+    upgrade: yes
 
 - name: remove dependencies that are no longer required
   become: yes

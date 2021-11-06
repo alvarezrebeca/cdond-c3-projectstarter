@@ -122,7 +122,6 @@ jobs:
           name: Scan backend dependencies
           command: |
             cd backend
-            pip install awscli
             npm install
             npm audit fix --audit-level=critical --force
             

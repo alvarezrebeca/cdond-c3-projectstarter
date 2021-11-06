@@ -1,25 +1,17 @@
 ---
-- name: Install Node modules
-  shell: |
-    cd /home/ubuntu/backend
-    ls -la
-    printenv
-    npm install
+- name: "Move backend files to server."
+  copy:
+    src: /root/project/backend_artifact.tar.gz
+    dest: ~/home/ubuntu
 
-- name: building node services
+- name: "install package dependencies"
   shell: |
-    cd /home/ubuntu/backend
-    npm run build
-    npm run prestart:prod
-
-- name: "run migrations again"
-  shell: |
-    cd /home/ubuntu/backend
-    npm run migrations
-
-- name: Executing node
-  become: true
-  shell: |
-    cd /home/ubuntu/backend 
+    cd ~/home/ubuntu
+    tar -xzvf backend_artifact.tar.gz -C backend
+    rm backend_artifact.tar.gz
+    cd backend/
+    # npm install && npm run build
+    npm audit fix && npm run build
+    cd dist
+    echo `pwd` >> ansible-test.txt
     pm2 start npm --name backend -- start
-    pm2 ls

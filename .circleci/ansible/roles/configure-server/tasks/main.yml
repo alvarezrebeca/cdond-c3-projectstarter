@@ -22,14 +22,9 @@
     update_cache: yes
 
 - name: "install pm2"
-  become: true
+  become: yes
   npm:
     name: pm2
     global: yes
     production: yes
     state: present
-
-- name: "sync files from CircleCI to Server"
-  synchronize:
-    src: /root/project/backend
-    dest: /home/ubuntu

@@ -1,4 +1,9 @@
 ---
+- name: Create dist directory.
+  file:
+    path: "~/home/ubuntu/"
+    state: directory
+
 - name: "Move backend files to server."
   copy:
     src: /root/project/artifact.tar.gz

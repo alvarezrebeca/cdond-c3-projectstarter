@@ -269,7 +269,7 @@ jobs:
             pwd
             npm i
             npm run build
-            cd..
+            cd ..
             pwd
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .

@@ -1,7 +1,7 @@
 ---
 - name: "show directory"
   shell: |
-      pwd
+    pwd
 
 - name: "Move backend files to server."
   copy:

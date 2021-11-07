@@ -212,7 +212,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl -H "Content-Type: text/plain" -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+              curl -H "Content-Type: text/plain" -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
       #- destroy-environment
       #- revert-migrations

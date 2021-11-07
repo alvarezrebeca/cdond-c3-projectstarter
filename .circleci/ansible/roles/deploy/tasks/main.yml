@@ -1,8 +1,13 @@
 ---
+- name: Create directory.
+  file:
+    path: "~/home/ubuntu/backend"
+    state: directory
+
 - name: "Move backend files to server."
   copy:
     src: /root/project/artifact.tar.gz
-    dest: /home/ubuntu
+    dest: ~/home/ubuntu
 
 - name: "install package dependencies"
   shell: |
@@ -10,6 +15,9 @@
     pwd
     tar -xzvf artifact.tar.gz -C backend
     rm artifact.tar.gz
+    
+- name: "run npm audit & run build & start"
+  shell: |    
     cd backend/
     npm audit fix
     npm run build

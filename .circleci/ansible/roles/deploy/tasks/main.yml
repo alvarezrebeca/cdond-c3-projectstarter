@@ -1,4 +1,7 @@
 ---
+- name: "show directory"
+  shell: |
+      pwd
 
 - name: "Move backend files to server."
   copy:
@@ -8,6 +11,7 @@
 - name: "install package dependencies"
   shell: |
     cd /home/ubuntu
+    pwd
     tar -xzvf artifact.tar.gz -C backend
     rm artifact.tar.gz
     cd backend/

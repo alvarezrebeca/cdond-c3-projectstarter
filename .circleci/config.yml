@@ -260,7 +260,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip nodejs npm ansible openssh-client rsynch
+            apk add --update tar gzip nodejs npm ansible 
+            apk add --no-cache openssh
+            apk add --no-cache rsync
             pip install awscli 
       - run:
           name: Deploy backend
@@ -273,6 +275,7 @@ jobs:
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is -------"
             cat inventory.txt
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i inventory.txt deploy-backend.yml
       #- destroy-environment
       #- revert-migrations

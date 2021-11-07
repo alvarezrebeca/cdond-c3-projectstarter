@@ -350,7 +350,7 @@ jobs:
 
               aws cloudformation deploy \
                 --template-file .circleci/files/cloudfront.yml \
-                --stack-name InitialStack-${OldWorkflowID} \
+                --stack-name InitialStack-729501865919 \
                 --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
 
               echo OldWorkflowID: "${OldWorkflowID}"

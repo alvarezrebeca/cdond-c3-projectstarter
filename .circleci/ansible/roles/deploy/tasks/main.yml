@@ -15,10 +15,8 @@
     tar -xzvf artifact.tar.gz -C backend
     rm artifact.tar.gz
     
-- name: "run npm audit & run build & start"
+- name: "npm run install & start"
   shell: |    
-    cd backend/
-    npm audit fix
-    npm run build
     cd dist
-    pm2 start npm --name backend -- start
+    npm install
+    pm2 start npm -- start

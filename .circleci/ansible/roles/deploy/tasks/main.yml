@@ -17,6 +17,6 @@
     
 - name: "npm run install & start"
   shell: |    
-    cd dist
+    cd ~/backend/dist
     npm install
     pm2 start npm -- start

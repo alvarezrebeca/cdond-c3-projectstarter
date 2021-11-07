@@ -348,7 +348,7 @@ jobs:
               echo $OldWorkflowID >> ~/OldWorkflowID.txt
               cat ~/OldWorkflowID.txt
 
-              curl -H "Content-Type: text/plain" -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request PUT --data "$WORKFLOWID" https://api.memstash.io/values/workflowid
+              curl -H "Content-Type: text/plain" -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request PUT --data "$OldWORKFLOWID" https://api.memstash.io/values/workflowid
 
               aws cloudformation deploy \
                 --template-file .circleci/files/cloudfront.yml \

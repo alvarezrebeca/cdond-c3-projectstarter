@@ -9,7 +9,7 @@
     src: /root/project/artifact.tar.gz
     dest: /home/ubuntu/
 
-- name: "install package dependencies"
+- name: "unpack the archive"
   shell: |
     cd ~/home/ubuntu/
     tar -xzvf artifact.tar.gz -C backend

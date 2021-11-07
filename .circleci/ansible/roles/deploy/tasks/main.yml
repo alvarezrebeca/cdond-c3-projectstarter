@@ -7,12 +7,11 @@
 - name: "Move backend files to server."
   copy:
     src: /root/project/artifact.tar.gz
-    dest: /home/ubuntu/backend
+    dest: /home/ubuntu/
 
 - name: "install package dependencies"
   shell: |
-    cd ~/home/ubuntu/backend
-    pwd
+    cd ~/home/ubuntu/
     tar -xzvf artifact.tar.gz -C backend
     rm artifact.tar.gz
     

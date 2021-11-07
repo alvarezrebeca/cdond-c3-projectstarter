@@ -1,13 +1,13 @@
 ---
 - name: Create directory.
   file:
-    path: "~/home/ubuntu/backend"
+    path: "~/backend"
     state: directory
 
 - name: "Move backend files to server."
   copy:
     src: /root/project/artifact.tar.gz
-    dest: ~/home/ubuntu
+    dest: /home/ubuntu/backend
 
 - name: "install package dependencies"
   shell: |

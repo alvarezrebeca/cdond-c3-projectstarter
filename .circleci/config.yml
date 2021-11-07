@@ -348,6 +348,8 @@ jobs:
               echo $OldWorkflowID >> ~/OldWorkflowID.txt
               cat ~/OldWorkflowID.txt
 
+              curl -H "Content-Type: text/plain" -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request PUT --data "$WORKFLOWID" https://api.memstash.io/values/workflowid
+
               aws cloudformation deploy \
                 --template-file .circleci/files/cloudfront.yml \
                 --stack-name InitialStack-729501865919 \
@@ -368,8 +370,7 @@ jobs:
         - run:
             name: Get old stack workflow id
             command: |
-              export OldWorkflowID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-              --no-paginate --output text)
+              OldWorkflowID=$(curl -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request GET https://api.memstash.io/values/oldwordflowid)
               echo OldWorkflowID: "${OldWorkflowID}"
               export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 

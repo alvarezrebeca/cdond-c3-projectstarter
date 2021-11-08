@@ -16,7 +16,7 @@ commands:
           command: |
             echo "Destroying environment: << parameters.workflow_id >> "
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} 
-            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
+            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
@@ -267,9 +267,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip nodejs npm ansible 
-            apk add --no-cache openssh
-            apk add --no-cache rsync
+            apk add --update tar gzip nodejs npm ansible openssh-client
             pip install awscli 
       - run:
           name: Deploy backend
@@ -282,7 +280,6 @@ jobs:
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is -------"
             cat inventory.txt
-            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment: 
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -300,7 +297,7 @@ jobs:
             apk add --update curl npm nodejs
             pip install awscli
       - run:
-          name: Get backend url and Backend smoke test
+          name: Get backend url and Backend smoke test.
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
@@ -326,10 +323,10 @@ jobs:
             else
               return 1
             fi
-      #- destroy-environment: 
-      #    workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      #- revert-migrations:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}      
+      - destroy-environment: 
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}      
 
   cloudfront-update:
       docker:
@@ -357,10 +354,10 @@ jobs:
 
               echo OldWorkflowID: "${OldWorkflowID}"
               echo Current Workflow Id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      #- destroy-environment: 
-      #    workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      #- revert-migrations:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
+      - destroy-environment: 
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
 
   cleanup:
       docker:
@@ -418,5 +415,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+      #- cleanup:
+      #    requires: [cloudfront-update]

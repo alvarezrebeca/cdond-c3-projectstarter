@@ -348,7 +348,7 @@ jobs:
               echo $OldWorkflowID >> ~/OldWorkflowID.txt
               cat ~/OldWorkflowID.txt
 
-              curl -H "Content-Type: text/plain" -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request PUT --data "$OldWorkflowID" https://api.memstash.io/values/workflowid
+              curl -H "Content-Type: text/plain" -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request PUT --data "$OldWorkflowID" https://api.memstash.io/values/oldworkflowid
 
               aws cloudformation deploy \
                 --template-file .circleci/files/cloudfront.yml \
@@ -370,7 +370,7 @@ jobs:
         - run:
             name: Get old stack workflow id
             command: |
-              OldWorkflowID=$(curl -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request GET https://api.memstash.io/values/oldwordflowid)
+              OldWorkflowID=$(curl -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request GET https://api.memstash.io/values/oldworkflowid)
               echo OldWorkflowID: "${OldWorkflowID}"
               export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
@@ -381,8 +381,8 @@ jobs:
             command: |
               if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
               then
-                echo "Deleting stacks with Old Worflow ID: ${OLD_WORKFLOW_ID}"
-                aws s3 rm s3://udapeople-${OLD_WORKFLOW_ID} --recursive
+                echo "Deleting stacks with Old Worflow ID: ${OldWorkflowID}"
+                aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
                 aws cloudformation delete-stack --stack-name udapeople-backend-${OldWorkflowID}
                 aws cloudformation delete-stack --stack-name udapeople-frontend-${OldWorkflowID}
               fi

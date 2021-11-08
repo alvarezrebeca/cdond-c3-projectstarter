@@ -379,6 +379,7 @@ jobs:
         - run:
             name: Remove old stacks and files
             command: |
+              export OldWorkflowID=$(curl -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request GET https://api.memstash.io/values/oldworkflowid)
               echo OldWorkflowID: "${OldWorkflowID}"
               echo "Deleting stacks with Old Worflow ID: ${OldWorkflowID}"
               aws s3 rm s3://udapeople-${OldWorkflowID} --force

@@ -370,11 +370,11 @@ jobs:
         - run:
             name: Get old stack workflow id
             command: |
-              OldWorkflowID=$(curl -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request GET https://api.memstash.io/values/oldworkflowid)
+              export OldWorkflowID=$(curl -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request GET https://api.memstash.io/values/oldworkflowid)
               echo OldWorkflowID: "${OldWorkflowID}"
-              # export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-              # --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-              #echo Stack names: "${STACKS[@]}"
+              export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+              echo Stack names: "${STACKS[@]}"
               echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
         - run:
             name: Remove old stacks and files

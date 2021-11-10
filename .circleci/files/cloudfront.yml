@@ -8,6 +8,7 @@ Parameters:
 
 
 Resources:
+
   CloudFrontOriginAccessIdentity:
     Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
     Properties:

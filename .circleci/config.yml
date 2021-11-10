@@ -358,7 +358,7 @@ jobs:
 
             curl -H "Content-Type: text/plain" -H "token: 04277214-2718-4270-8318-90081c53a7f9" --request PUT --data "$OldWorkflowID" https://api.memstash.io/values/oldworkflowid
 
-            aws cloudformation update-stack \
+            aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name InitialStack \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
